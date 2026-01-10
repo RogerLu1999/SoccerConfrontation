@@ -2,6 +2,11 @@
 
 A simple penalty confrontation mini-game. Aim with the arrow keys, press space to shoot, and outsmart the AI keeper.
 
+## Installation
+
+1. Clone this repository.
+2. Open `index.html` in your browser.
+
 ## How to play
 
 1. Open `index.html` in your browser.
