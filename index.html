@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soccer Confrontation - Penalty Duel</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <h1>Soccer Confrontation</h1>
+        <p>Penalty duel: choose your direction with the arrow keys, press Space to shoot.</p>
+      </header>
+
+      <section class="scoreboard" aria-live="polite">
+        <div>
+          <h2>Score</h2>
+          <p>Goals: <span id="goals">0</span></p>
+          <p>Saves: <span id="saves">0</span></p>
+          <p>Shots: <span id="shots">0</span></p>
+        </div>
+        <div class="status">
+          <h2>Status</h2>
+          <p id="statusText">Pick a direction to aim.</p>
+          <p class="hint">Aim: <span id="aimText">Center</span></p>
+        </div>
+      </section>
+
+      <section class="arena">
+        <div class="goal">
+          <div class="keeper" id="keeper"></div>
+          <div class="target left" data-direction="left"></div>
+          <div class="target center" data-direction="center"></div>
+          <div class="target right" data-direction="right"></div>
+        </div>
+        <div class="ball" id="ball"></div>
+      </section>
+
+      <section class="controls">
+        <div>
+          <h2>Controls</h2>
+          <ul>
+            <li>⬅️ / ➡️: Aim left or right</li>
+            <li>⬆️ / ⬇️: Aim high or low (adds variety)</li>
+            <li>Space: Kick</li>
+            <li>R: Reset score</li>
+          </ul>
+        </div>
+        <div class="keeper-intel">
+          <h2>Keeper Intelligence</h2>
+          <p>The keeper studies your last shots and anticipates the most likely direction.</p>
+        </div>
+      </section>
+    </main>
+    <script src="game.js"></script>
+  </body>
+</html>
