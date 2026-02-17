@@ -163,20 +163,23 @@ function rememberShot(xRatio, yRatio, saved) {
   renderMiniGoal();
 }
 
-function endRound(saved, xRatio, yRatio) {
+function endRound(result, xRatio, yRatio) {
   state.shots += 1;
 
-  if (saved) {
+  if (result === "saved") {
     state.saves += 1;
     state.score -= 1;
     setStatus("被门将扑出了！-1 分");
+  } else if (result === "miss") {
+    state.score -= 1;
+    setStatus("射偏了！-1 分");
   } else {
     state.goals += 1;
     state.score += 1;
     setStatus("进球！+1 分");
   }
 
-  rememberShot(xRatio, yRatio, saved);
+  rememberShot(xRatio, yRatio, result !== "goal");
   updateBoard();
 
   setTimeout(() => {
@@ -215,11 +218,17 @@ function shoot() {
   moveKeeper(keeperZone);
 
   animateBallToPoint(aim.x, aim.y, () => {
+    const isOutOfGoal = aim.xRatio < 0 || aim.xRatio > 1 || aim.yRatio < 0 || aim.yRatio > 1;
+    if (isOutOfGoal) {
+      endRound("miss", aim.xRatio, aim.yRatio);
+      return;
+    }
+
     const shotZone = classifyZone(Math.max(0, Math.min(1, aim.xRatio)), Math.max(0, Math.min(1, aim.yRatio)));
     const exactSave = keeperZone === shotZone;
     const sameRow = keeperZone.endsWith("Top") === shotZone.endsWith("Top");
     const neighborSave = sameRow && Math.random() < 0.2;
-    endRound(exactSave || neighborSave, aim.xRatio, aim.yRatio);
+    endRound(exactSave || neighborSave ? "saved" : "goal", aim.xRatio, aim.yRatio);
   });
 }
 
