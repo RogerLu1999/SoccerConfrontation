@@ -1,8 +1,7 @@
 :root {
-  font-family: "Segoe UI", system-ui, sans-serif;
-  color: #f4f5f7;
-  background: radial-gradient(circle at top, #1b3b5f, #0c1724 70%);
-  height: 100%;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #eef3f4;
+  background: radial-gradient(circle at top, #16401d, #0d2512 70%);
 }
 
 * {
@@ -11,162 +10,208 @@
 
 body {
   margin: 0;
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 .page {
-  max-width: 960px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 32px 24px 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 14px;
 }
 
 .header h1 {
-  margin-bottom: 8px;
-  font-size: 2.5rem;
+  margin: 0 0 6px;
 }
 
 .header p {
   margin: 0;
-  color: #d8e2ef;
+  color: #d4e9d3;
 }
 
-.scoreboard {
+.layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: minmax(220px, 1fr) minmax(640px, 2.6fr) minmax(220px, 1fr);
   gap: 16px;
-  background: rgba(12, 20, 36, 0.7);
-  padding: 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: stretch;
 }
 
-.status {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.panel {
+  background: rgba(10, 23, 12, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.panel h2 {
+  margin-top: 0;
 }
 
 .hint {
-  color: #90b4e8;
+  color: #addbaa;
 }
 
-.arena {
-  position: relative;
-  height: 340px;
-  background: linear-gradient(180deg, #2d4a72 0%, #132238 60%, #0b141f 100%);
-  border-radius: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  overflow: hidden;
-}
-
-.goal {
-  position: absolute;
-  top: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 180px;
-  border: 3px solid #dbe7f7;
-  border-bottom: none;
-  border-radius: 16px 16px 0 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.target {
-  position: absolute;
-  top: 10px;
-  width: 30%;
-  height: 60%;
-  border-radius: 12px;
-  border: 2px dashed rgba(255, 255, 255, 0.2);
-}
-
-.target.left {
-  left: 8px;
-}
-
-.target.center {
-  left: 35%;
-}
-
-.target.right {
-  right: 8px;
-}
-
-.keeper {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 100px;
-  background: linear-gradient(180deg, #f7b731, #e17055);
-  border-radius: 40px 40px 16px 16px;
-  transition: transform 0.4s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.keeper::after {
-  content: "";
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 20px;
-}
-
-.ball {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translate(-50%, 0);
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ffffff, #d1d8e0 60%, #98a4b4 100%);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s ease;
-}
-
-.ball.kicking {
-  transition: none;
-}
-
-.controls {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  background: rgba(12, 20, 36, 0.7);
-  padding: 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+#statusText {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #ffe99a;
 }
 
 .controls ul {
   padding-left: 20px;
-  margin: 8px 0 0;
 }
 
-.keeper-intel {
-  color: #d5e3f5;
+.arena {
+  position: relative;
+  min-height: 620px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background:
+    linear-gradient(to bottom, rgba(160, 215, 255, 0.2), rgba(8, 18, 9, 0.2)),
+    repeating-linear-gradient(
+      90deg,
+      #1f7a2f 0,
+      #1f7a2f 90px,
+      #228735 90px,
+      #228735 180px
+    );
 }
 
-@media (max-width: 720px) {
-  .goal {
-    width: 90%;
+.stadium-light {
+  position: absolute;
+  top: -80px;
+  left: -20%;
+  width: 140%;
+  height: 240px;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+}
+
+.goal {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 68%;
+  height: 300px;
+  border: 6px solid #f8f8f8;
+  border-top-width: 8px;
+  background: rgba(234, 243, 255, 0.14);
+  border-radius: 6px;
+}
+
+.zone-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.zone {
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.keeper,
+.striker {
+  position: absolute;
+  width: 92px;
+  height: 220px;
+  transform-origin: center bottom;
+}
+
+.keeper {
+  left: calc(50% - 46px);
+  bottom: 10px;
+  transition: transform 0.35s ease;
+}
+
+.keeper .head,
+.striker .head {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  margin: 0 auto;
+  background: linear-gradient(#f7d5bb, #d0a381);
+}
+
+.keeper .body,
+.striker .body {
+  width: 56px;
+  height: 92px;
+  margin: 6px auto 0;
+  border-radius: 18px;
+}
+
+.keeper .body {
+  background: linear-gradient(#7e3ec9, #5a2f92);
+}
+
+.striker .body {
+  background: linear-gradient(#4c2f2f, #261414);
+}
+
+.keeper .arms,
+.keeper .legs,
+.striker .legs {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.keeper .arms {
+  top: 58px;
+  width: 96px;
+  height: 12px;
+  border-radius: 12px;
+  background: #f0e7ff;
+}
+
+.keeper .legs,
+.striker .legs {
+  bottom: 0;
+  width: 60px;
+  height: 88px;
+  background: linear-gradient(to right, transparent 0 22px, #1f1b2b 22px 26px, transparent 26px 34px, #1f1b2b 34px 38px, transparent 38px);
+}
+
+.striker {
+  left: calc(50% - 46px);
+  bottom: 34px;
+  transition: transform 0.3s ease;
+}
+
+.ball {
+  position: absolute;
+  left: 50%;
+  bottom: 65px;
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #dde4ec 60%, #9eaaba);
+  box-shadow: 0 10px 12px rgba(0, 0, 0, 0.36);
+}
+
+.ball.kicking {
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 1120px) {
+  .layout {
+    grid-template-columns: 1fr;
   }
 
-  .keeper {
-    width: 64px;
-    height: 84px;
+  .arena {
+    order: -1;
+    min-height: 560px;
   }
 }
