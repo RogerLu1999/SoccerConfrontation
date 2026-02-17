@@ -21,16 +21,21 @@
           <p>扑救：<span id="saves">0</span></p>
           <p>总射门：<span id="shots">0</span></p>
           <p class="hint">当前高度：<span id="aimText">中</span></p>
+          <p class="hint">当前力度：<span id="powerText">50%</span></p>
           <p id="statusText">按空格锁定圆圈并射门。</p>
         </aside>
 
         <section class="arena" aria-label="点球区域">
           <div class="stadium-light"></div>
           <div class="goal" id="goal">
+            <div class="goal-depth" aria-hidden="true"></div>
             <div class="zone-grid" aria-hidden="true">
               <div class="zone">左上</div>
               <div class="zone">中上</div>
               <div class="zone">右上</div>
+              <div class="zone">左中</div>
+              <div class="zone">中中</div>
+              <div class="zone">右中</div>
               <div class="zone">左下</div>
               <div class="zone">中下</div>
               <div class="zone">右下</div>
@@ -42,6 +47,15 @@
               <div class="legs"></div>
             </div>
             <div class="aim-ring" id="aimRing" aria-hidden="true"></div>
+          </div>
+
+          <div class="power-meter" aria-label="力度摇摆器">
+            <span>力度摇摆器</span>
+            <div class="power-track">
+              <div class="power-fill" id="powerFill"></div>
+              <div class="power-pointer" id="powerPointer"></div>
+            </div>
+            <small>指针越靠右，射门越猛（满格时即使门将判断正确也可能破门）</small>
           </div>
 
           <div class="mini-goal-panel" aria-live="polite">
@@ -64,6 +78,7 @@
             <li>圆圈会自动从球门左外侧摇摆到右外侧</li>
             <li>↑：圆圈抬高 1/3 球门高度</li>
             <li>↓：圆圈降低 1/3 球门高度</li>
+            <li>力度摇摆器自动左右摆动，越靠右力度越大</li>
             <li>空格：停止圆圈并立即射门</li>
             <li>R：重新开始</li>
           </ul>
