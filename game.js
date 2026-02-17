@@ -3,6 +3,7 @@ const goalsEl = document.getElementById("goals");
 const savesEl = document.getElementById("saves");
 const shotsEl = document.getElementById("shots");
 const aimText = document.getElementById("aimText");
+const powerTextEl = document.getElementById("powerText");
 const statusText = document.getElementById("statusText");
 const keeperEl = document.getElementById("keeper");
 const strikerEl = document.getElementById("striker");
@@ -10,6 +11,8 @@ const ballEl = document.getElementById("ball");
 const goalEl = document.getElementById("goal");
 const aimRingEl = document.getElementById("aimRing");
 const miniGoalEl = document.getElementById("miniGoal");
+const powerFillEl = document.getElementById("powerFill");
+const powerPointerEl = document.getElementById("powerPointer");
 
 const laneLabel = {
   "-1": "上",
@@ -27,6 +30,9 @@ const state = {
   laneOffset: 0,
   swayPhase: 0,
   swaySpeed: 0.0026,
+  powerPhase: 0,
+  powerSpeed: 0.0044,
+  powerRatio: 0.5,
   lastTime: 0,
   ringVisible: true,
   shotHistory: [],
@@ -38,6 +44,7 @@ function updateBoard() {
   savesEl.textContent = state.saves;
   shotsEl.textContent = state.shots;
   aimText.textContent = laneLabel[state.laneOffset];
+  powerTextEl.textContent = `${Math.round(state.powerRatio * 100)}%`;
 }
 
 function setStatus(text) {
@@ -60,6 +67,12 @@ function getAimPosition() {
     xRatio,
     yRatio,
   };
+}
+
+function renderPowerMeter() {
+  const percent = Math.max(0, Math.min(1, state.powerRatio)) * 100;
+  powerFillEl.style.width = `${percent}%`;
+  powerPointerEl.style.left = `${percent}%`;
 }
 
 function renderAimRing() {
@@ -85,7 +98,11 @@ function animateAim(now) {
 
   if (!state.locked && !state.isGameOver) {
     state.swayPhase += delta * state.swaySpeed;
+    state.powerPhase += delta * state.powerSpeed;
+    state.powerRatio = 0.5 + Math.sin(state.powerPhase) * 0.5;
     renderAimRing();
+    renderPowerMeter();
+    updateBoard();
   }
 
   requestAnimationFrame(animateAim);
@@ -93,20 +110,30 @@ function animateAim(now) {
 
 function classifyZone(xRatio, yRatio) {
   const horizontal = xRatio < 1 / 3 ? "left" : xRatio < 2 / 3 ? "mid" : "right";
-  const vertical = yRatio < 0.5 ? "Top" : "Bottom";
+  const vertical = yRatio < 1 / 3 ? "Top" : yRatio < 2 / 3 ? "Middle" : "Bottom";
   return `${horizontal}${vertical}`;
 }
 
 function chooseKeeperZone() {
-  const zones = ["leftTop", "midTop", "rightTop", "leftBottom", "midBottom", "rightBottom"];
+  const zones = [
+    "leftTop",
+    "midTop",
+    "rightTop",
+    "leftMiddle",
+    "midMiddle",
+    "rightMiddle",
+    "leftBottom",
+    "midBottom",
+    "rightBottom",
+  ];
   return zones[Math.floor(Math.random() * zones.length)];
 }
 
 function moveKeeper(zone) {
   const xRatio = zone.startsWith("left") ? 0.16 : zone.startsWith("mid") ? 0.5 : 0.84;
-  const yRatio = zone.endsWith("Top") ? 0.24 : 0.74;
+  const yRatio = zone.endsWith("Top") ? 0.19 : zone.endsWith("Middle") ? 0.5 : 0.79;
   const keeperDx = (xRatio - 0.5) * 300;
-  const keeperDy = yRatio < 0.45 ? -45 : 10;
+  const keeperDy = yRatio < 0.35 ? -60 : yRatio > 0.7 ? 16 : -18;
   keeperEl.style.transform = `translate(${keeperDx}px, ${keeperDy}px) scale(1.02)`;
 }
 
@@ -163,7 +190,7 @@ function rememberShot(xRatio, yRatio, saved) {
   renderMiniGoal();
 }
 
-function endRound(result, xRatio, yRatio) {
+function endRound(result, xRatio, yRatio, powerRatio) {
   state.shots += 1;
 
   if (result === "saved") {
@@ -173,13 +200,17 @@ function endRound(result, xRatio, yRatio) {
   } else if (result === "miss") {
     state.score -= 1;
     setStatus("射偏了！-1 分");
+  } else if (result === "powerGoal") {
+    state.goals += 1;
+    state.score += 1;
+    setStatus("暴力抽射！门将判断对了也没扑住，+1 分");
   } else {
     state.goals += 1;
     state.score += 1;
     setStatus("进球！+1 分");
   }
 
-  rememberShot(xRatio, yRatio, result !== "goal");
+  rememberShot(xRatio, yRatio, result !== "goal" && result !== "powerGoal");
   updateBoard();
 
   setTimeout(() => {
@@ -194,7 +225,7 @@ function endRound(result, xRatio, yRatio) {
       state.isGameOver = true;
       setStatus("你输了");
     } else {
-      setStatus("继续，调整高度后按空格射门。");
+      setStatus(`继续，调整高度后按空格射门。当前力度 ${Math.round(powerRatio * 100)}%`);
       state.ringVisible = true;
       renderAimRing();
     }
@@ -211,7 +242,9 @@ function shoot() {
   state.locked = true;
   state.ringVisible = false;
   renderAimRing();
-  setStatus("已锁定圆圈，射门中...");
+
+  const shotPower = state.powerRatio;
+  setStatus(`已锁定圆圈，射门中... 力度 ${Math.round(shotPower * 100)}%`);
 
   const aim = getAimPosition();
   const keeperZone = chooseKeeperZone();
@@ -220,15 +253,23 @@ function shoot() {
   animateBallToPoint(aim.x, aim.y, () => {
     const isOutOfGoal = aim.xRatio < 0 || aim.xRatio > 1 || aim.yRatio < 0 || aim.yRatio > 1;
     if (isOutOfGoal) {
-      endRound("miss", aim.xRatio, aim.yRatio);
+      endRound("miss", aim.xRatio, aim.yRatio, shotPower);
       return;
     }
 
     const shotZone = classifyZone(Math.max(0, Math.min(1, aim.xRatio)), Math.max(0, Math.min(1, aim.yRatio)));
     const exactSave = keeperZone === shotZone;
-    const sameRow = keeperZone.endsWith("Top") === shotZone.endsWith("Top");
-    const neighborSave = sameRow && Math.random() < 0.2;
-    endRound(exactSave || neighborSave ? "saved" : "goal", aim.xRatio, aim.yRatio);
+    const rowOf = (zone) => (zone.endsWith("Top") ? "Top" : zone.endsWith("Middle") ? "Middle" : "Bottom");
+    const sameRow = rowOf(keeperZone) === rowOf(shotZone);
+    const neighborSave = sameRow && Math.random() < 0.16;
+
+    if (exactSave) {
+      const powerBreakthroughChance = shotPower > 0.9 ? 0.38 : shotPower > 0.75 ? 0.2 : 0;
+      endRound(Math.random() < powerBreakthroughChance ? "powerGoal" : "saved", aim.xRatio, aim.yRatio, shotPower);
+      return;
+    }
+
+    endRound(neighborSave ? "saved" : "goal", aim.xRatio, aim.yRatio, shotPower);
   });
 }
 
@@ -240,14 +281,16 @@ function resetGame() {
   state.locked = false;
   state.isGameOver = false;
   state.laneOffset = 0;
+  state.powerRatio = 0.5;
   state.shotHistory = [];
   state.ringVisible = true;
   ballEl.style.transform = "translate(0, 0) scale(1)";
   resetCharacters();
   renderMiniGoal();
   renderAimRing();
+  renderPowerMeter();
   updateBoard();
-  setStatus("新一局开始，按 ↑/↓ 调高度，空格锁定射门。");
+  setStatus("新一局开始，按 ↑/↓ 调高度，盯住力度条，空格锁定射门。");
 }
 
 document.addEventListener("keydown", (event) => {
@@ -257,7 +300,7 @@ document.addEventListener("keydown", (event) => {
       state.laneOffset = Math.max(-1, state.laneOffset - 1);
       updateBoard();
       renderAimRing();
-      setStatus(`圆圈高度：${laneLabel[state.laneOffset]}，按空格射门。`);
+      setStatus(`圆圈高度：${laneLabel[state.laneOffset]}，力度 ${Math.round(state.powerRatio * 100)}%，按空格射门。`);
     }
     return;
   }
@@ -268,7 +311,7 @@ document.addEventListener("keydown", (event) => {
       state.laneOffset = Math.min(1, state.laneOffset + 1);
       updateBoard();
       renderAimRing();
-      setStatus(`圆圈高度：${laneLabel[state.laneOffset]}，按空格射门。`);
+      setStatus(`圆圈高度：${laneLabel[state.laneOffset]}，力度 ${Math.round(state.powerRatio * 100)}%，按空格射门。`);
     }
     return;
   }
@@ -286,5 +329,6 @@ document.addEventListener("keydown", (event) => {
 
 updateBoard();
 renderMiniGoal();
+renderPowerMeter();
 requestAnimationFrame(animateAim);
-setStatus("按 ↑/↓ 调高度，空格锁定圆圈并射门。");
+setStatus("按 ↑/↓ 调高度，观察力度摇摆器，空格锁定圆圈并射门。");
