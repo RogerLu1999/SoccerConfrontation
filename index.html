@@ -1,58 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soccer Confrontation - Penalty Duel</title>
+    <title>Soccer Confrontation - 点球对决</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="page">
       <header class="header">
-        <h1>Soccer Confrontation</h1>
-        <p>Penalty duel: choose your direction with the arrow keys, press Space to shoot.</p>
+        <h1>Soccer Confrontation 点球大战</h1>
+        <p>数字键 1-6 选择射门分区，空格键射门，先到 +5 或 -5 结束比赛。</p>
       </header>
 
-      <section class="scoreboard" aria-live="polite">
-        <div>
-          <h2>Score</h2>
-          <p>Goals: <span id="goals">0</span></p>
-          <p>Saves: <span id="saves">0</span></p>
-          <p>Shots: <span id="shots">0</span></p>
-        </div>
-        <div class="status">
-          <h2>Status</h2>
-          <p id="statusText">Pick a direction to aim.</p>
-          <p class="hint">Aim: <span id="aimText">Center</span></p>
-        </div>
-      </section>
+      <section class="layout">
+        <aside class="panel scoreboard" aria-live="polite">
+          <h2>得分区</h2>
+          <p>当前分数：<span id="score">0</span></p>
+          <p>进球：<span id="goals">0</span></p>
+          <p>扑救：<span id="saves">0</span></p>
+          <p>总射门：<span id="shots">0</span></p>
+          <p class="hint">当前瞄准：<span id="aimText">中下</span></p>
+          <p id="statusText">请选择一个区域准备射门。</p>
+        </aside>
 
-      <section class="arena">
-        <div class="goal">
-          <div class="keeper" id="keeper"></div>
-          <div class="target left" data-direction="left"></div>
-          <div class="target center" data-direction="center"></div>
-          <div class="target right" data-direction="right"></div>
-        </div>
-        <div class="ball" id="ball"></div>
-      </section>
+        <section class="arena" aria-label="点球区域">
+          <div class="stadium-light"></div>
+          <div class="goal" id="goal">
+            <div class="zone-grid" aria-hidden="true">
+              <div class="zone">左上</div>
+              <div class="zone">中上</div>
+              <div class="zone">右上</div>
+              <div class="zone">左下</div>
+              <div class="zone">中下</div>
+              <div class="zone">右下</div>
+            </div>
+            <div class="keeper" id="keeper">
+              <div class="head"></div>
+              <div class="body"></div>
+              <div class="arms"></div>
+              <div class="legs"></div>
+            </div>
+          </div>
 
-      <section class="controls">
-        <div>
-          <h2>Controls</h2>
+          <div class="striker" id="striker">
+            <div class="head"></div>
+            <div class="body"></div>
+            <div class="legs"></div>
+          </div>
+
+          <div class="ball" id="ball"></div>
+        </section>
+
+        <aside class="panel controls">
+          <h2>玩法指引</h2>
           <ul>
-            <li>⬅️ / ➡️: Aim left or right</li>
-            <li>⬆️ / ⬇️: Aim high or low (adds variety)</li>
-            <li>Space: Kick</li>
-            <li>R: Reset score</li>
+            <li>按键 1：左上</li>
+            <li>按键 2：中上</li>
+            <li>按键 3：右上</li>
+            <li>按键 4：左下</li>
+            <li>按键 5：中下</li>
+            <li>按键 6：右下</li>
+            <li>空格：射门</li>
+            <li>R：重新开始</li>
           </ul>
-        </div>
-        <div class="keeper-intel">
-          <h2>Keeper Intelligence</h2>
-          <p>The keeper studies your last shots and anticipates the most likely direction.</p>
-        </div>
+          <p>规则：进一球 +1，被扑出 -1，分数到达 +5 显示“你赢了”，到达 -5 显示“你输了”。</p>
+        </aside>
       </section>
     </main>
+
     <script src="game.js"></script>
   </body>
 </html>
