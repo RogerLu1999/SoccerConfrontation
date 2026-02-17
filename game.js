@@ -114,7 +114,7 @@ function setStatus(text) {
 }
 
 function resetCharacters() {
-  keeperEl.style.transform = "translate(0, 0) scale(1)";
+  keeperEl.style.transform = "translate(0, 0) scale(0.94)";
   strikerEl.style.transform = "translate(0, 0)";
 }
 
@@ -194,9 +194,9 @@ function chooseKeeperZone() {
 function moveKeeper(zone) {
   const xRatio = zone.startsWith("left") ? 0.16 : zone.startsWith("mid") ? 0.5 : 0.84;
   const yRatio = zone.endsWith("Top") ? 0.19 : zone.endsWith("Middle") ? 0.5 : 0.79;
-  const keeperDx = (xRatio - 0.5) * 300;
-  const keeperDy = yRatio < 0.35 ? -60 : yRatio > 0.7 ? 16 : -18;
-  keeperEl.style.transform = `translate(${keeperDx}px, ${keeperDy}px) scale(1.02)`;
+  const keeperDx = (xRatio - 0.5) * 240;
+  const keeperDy = yRatio < 0.35 ? -48 : yRatio > 0.7 ? 14 : -14;
+  keeperEl.style.transform = `translate(${keeperDx}px, ${keeperDy}px) scale(0.94)`;
 }
 
 function animateBallToPoint(targetX, targetY, onEnd) {

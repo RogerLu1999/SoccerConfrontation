@@ -71,7 +71,8 @@ body {
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.2);
   background:
-    linear-gradient(to bottom, rgba(160, 215, 255, 0.2), rgba(8, 18, 9, 0.2)),
+    radial-gradient(circle at 50% -20%, rgba(255, 255, 255, 0.22), transparent 48%),
+    linear-gradient(to bottom, rgba(160, 215, 255, 0.2), rgba(8, 18, 9, 0.25)),
     repeating-linear-gradient(
       90deg,
       #1f7a2f 0,
@@ -79,6 +80,7 @@ body {
       #228735 90px,
       #228735 180px
     );
+  perspective: 1000px;
 }
 
 .stadium-light {
@@ -92,12 +94,12 @@ body {
 
 .goal {
   position: absolute;
-  top: 68px;
+  top: 82px;
   left: 50%;
-  transform: translateX(-50%);
-  width: 68%;
-  height: 300px;
-  border: 8px solid #d8dde6;
+  transform: translateX(-50%) rotateX(5deg);
+  width: 60%;
+  height: 252px;
+  border: 7px solid #d8dde6;
   border-radius: 14px 14px 8px 8px;
   background: linear-gradient(to bottom, rgba(244, 247, 252, 0.9), rgba(221, 228, 238, 0.76));
   box-shadow:
@@ -110,11 +112,11 @@ body {
 .goal::after {
   content: "";
   position: absolute;
-  top: 14px;
-  width: 36px;
-  height: calc(100% - 22px);
+  top: 12px;
+  width: 30px;
+  height: calc(100% - 20px);
   pointer-events: none;
-  border: 4px solid #cad2de;
+  border: 3px solid #cad2de;
   border-radius: 8px;
   background:
     repeating-linear-gradient(0deg, rgba(178, 186, 201, 0.46) 0 2px, transparent 2px 20px),
@@ -124,20 +126,20 @@ body {
 }
 
 .goal::before {
-  left: -26px;
+  left: -22px;
   transform: skewY(8deg);
   transform-origin: right top;
 }
 
 .goal::after {
-  right: -26px;
+  right: -22px;
   transform: skewY(-8deg);
   transform-origin: left top;
 }
 
 .goal-depth {
   position: absolute;
-  inset: 14px;
+  inset: 12px;
   border: 2px solid rgba(175, 186, 203, 0.7);
   border-radius: 8px;
   background:
@@ -165,15 +167,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   color: rgba(243, 248, 255, 0.78);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
 .aim-ring {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 4px solid rgba(255, 243, 145, 0.95);
   box-shadow: 0 0 14px rgba(255, 240, 120, 0.7);
@@ -284,80 +286,168 @@ body {
 .keeper,
 .striker {
   position: absolute;
-  width: 92px;
-  height: 220px;
+  width: 102px;
+  height: 200px;
   transform-origin: center bottom;
+  transform-style: preserve-3d;
 }
 
 .keeper {
-  left: calc(50% - 46px);
-  bottom: 10px;
+  left: calc(50% - 51px);
+  bottom: 24px;
   transition: transform 0.35s ease;
-  z-index: 3;
+  z-index: 4;
+}
+
+.striker {
+  left: calc(50% - 51px);
+  bottom: 42px;
+  transition: transform 0.3s ease;
+  z-index: 4;
 }
 
 .keeper .head,
 .striker .head {
-  width: 38px;
-  height: 38px;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  margin: 0 auto;
-  background: linear-gradient(#f7d5bb, #d0a381);
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 242, 229, 0.95), rgba(255, 242, 229, 0) 35%),
+    linear-gradient(145deg, #ffd9be, #be8f6c);
+  border: 1px solid rgba(75, 34, 18, 0.28);
+  box-shadow: inset -4px -6px 8px rgba(115, 65, 32, 0.25), 0 5px 10px rgba(0, 0, 0, 0.22);
 }
 
-.keeper .body,
-.striker .body {
-  width: 56px;
-  height: 92px;
-  margin: 6px auto 0;
-  border-radius: 18px;
+.keeper .torso,
+.striker .torso {
+  position: absolute;
+  left: 50%;
+  top: 36px;
+  width: 52px;
+  height: 80px;
+  border-radius: 18px 18px 14px 14px;
+  transform: translateX(-50%);
+  box-shadow: inset 0 -10px 12px rgba(0, 0, 0, 0.18), 0 7px 12px rgba(0, 0, 0, 0.2);
 }
 
-.keeper .body {
-  background: linear-gradient(#7e3ec9, #5a2f92);
+.keeper .torso {
+  background: linear-gradient(155deg, #a061ff, #59269f 70%);
 }
 
-.striker .body {
-  background: linear-gradient(#4c2f2f, #261414);
+.striker .torso {
+  background: linear-gradient(160deg, #df3a3a, #5f1616 72%);
 }
 
-.keeper .arms,
-.keeper .legs,
-.striker .legs {
+.arm,
+.leg {
+  position: absolute;
+  transform-origin: top center;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.2));
+}
+
+.segment {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  border-radius: 999px;
+  box-shadow: inset -2px -3px 6px rgba(0, 0, 0, 0.16);
 }
 
-.keeper .arms {
-  top: 58px;
-  width: 96px;
-  height: 12px;
-  border-radius: 12px;
-  background: #f0e7ff;
+.arm {
+  top: 46px;
+  width: 14px;
+  height: 76px;
 }
 
-.keeper .legs,
-.striker .legs {
-  bottom: 0;
-  width: 60px;
-  height: 88px;
-  background: linear-gradient(to right, transparent 0 22px, #1f1b2b 22px 26px, transparent 26px 34px, #1f1b2b 34px 38px, transparent 38px);
+.arm .upper {
+  top: 0;
+  width: 12px;
+  height: 36px;
+  background: linear-gradient(150deg, #fef1e5, #c89374);
 }
 
-.striker {
-  left: calc(50% - 46px);
-  bottom: 34px;
-  transition: transform 0.3s ease;
+.arm .lower {
+  top: 30px;
+  width: 10px;
+  height: 38px;
+  background: linear-gradient(150deg, #f8e6d7, #b98465);
+}
+
+.arm-left {
+  left: 22px;
+  transform: rotate(26deg);
+}
+
+.arm-right {
+  right: 22px;
+  transform: rotate(-24deg);
+}
+
+.keeper .arm-left {
+  transform: rotate(38deg) translateY(-3px);
+}
+
+.keeper .arm-right {
+  transform: rotate(-38deg) translateY(-3px);
+}
+
+.leg {
+  top: 108px;
+  width: 18px;
+  height: 92px;
+}
+
+.leg .upper {
+  top: 0;
+  width: 16px;
+  height: 44px;
+  background: linear-gradient(165deg, #1f2232, #080a11);
+}
+
+.leg .lower {
+  top: 38px;
+  width: 14px;
+  height: 44px;
+  background: linear-gradient(165deg, #2c3044, #0a0c16);
+}
+
+.leg-left {
+  left: 35px;
+  transform: rotate(8deg);
+}
+
+.leg-right {
+  right: 35px;
+  transform: rotate(-10deg);
+}
+
+.striker .leg-left {
+  transform: rotate(18deg);
+}
+
+.striker .leg-right {
+  transform: rotate(-26deg) translateY(3px);
+}
+
+.keeper .leg-left {
+  transform: rotate(14deg);
+}
+
+.keeper .leg-right {
+  transform: rotate(-14deg);
 }
 
 .ball {
   position: absolute;
   left: 50%;
-  bottom: 65px;
-  width: 30px;
-  height: 30px;
-  margin-left: -15px;
+  bottom: 58px;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #fff, #dde4ec 60%, #9eaaba);
   box-shadow: 0 10px 12px rgba(0, 0, 0, 0.36);
