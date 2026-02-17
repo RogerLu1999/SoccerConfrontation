@@ -14,6 +14,68 @@ const miniGoalEl = document.getElementById("miniGoal");
 const powerFillEl = document.getElementById("powerFill");
 const powerPointerEl = document.getElementById("powerPointer");
 
+const audioState = {
+  ctx: null,
+};
+
+function getAudioContext() {
+  if (!audioState.ctx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) {
+      return null;
+    }
+    audioState.ctx = new AudioCtx();
+  }
+  return audioState.ctx;
+}
+
+function playTone(context, { frequency, duration, type = "sine", gain = 0.12, delay = 0 }) {
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const startAt = context.currentTime + delay;
+  const endAt = startAt + duration;
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, startAt);
+
+  gainNode.gain.setValueAtTime(0.001, startAt);
+  gainNode.gain.exponentialRampToValueAtTime(gain, startAt + 0.03);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, endAt);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start(startAt);
+  oscillator.stop(endAt + 0.02);
+}
+
+function playCrowdCheer() {
+  const context = getAudioContext();
+  if (!context) {
+    return;
+  }
+  if (context.state === "suspended") {
+    context.resume();
+  }
+
+  playTone(context, { frequency: 540, duration: 0.16, type: "triangle", gain: 0.09 });
+  playTone(context, { frequency: 740, duration: 0.2, type: "triangle", gain: 0.08, delay: 0.09 });
+  playTone(context, { frequency: 960, duration: 0.24, type: "sawtooth", gain: 0.06, delay: 0.16 });
+}
+
+function playCrowdSigh() {
+  const context = getAudioContext();
+  if (!context) {
+    return;
+  }
+  if (context.state === "suspended") {
+    context.resume();
+  }
+
+  playTone(context, { frequency: 320, duration: 0.2, type: "sine", gain: 0.08 });
+  playTone(context, { frequency: 250, duration: 0.26, type: "sine", gain: 0.07, delay: 0.08 });
+  playTone(context, { frequency: 196, duration: 0.3, type: "triangle", gain: 0.06, delay: 0.16 });
+}
+
 const laneLabel = {
   "-1": "上",
   0: "中",
@@ -197,17 +259,21 @@ function endRound(result, xRatio, yRatio, powerRatio) {
     state.saves += 1;
     state.score -= 1;
     setStatus("被门将扑出了！-1 分");
+    playCrowdSigh();
   } else if (result === "miss") {
     state.score -= 1;
     setStatus("射偏了！-1 分");
+    playCrowdSigh();
   } else if (result === "powerGoal") {
     state.goals += 1;
     state.score += 1;
     setStatus("暴力抽射！门将判断对了也没扑住，+1 分");
+    playCrowdCheer();
   } else {
     state.goals += 1;
     state.score += 1;
     setStatus("进球！+1 分");
+    playCrowdCheer();
   }
 
   rememberShot(xRatio, yRatio, result !== "goal" && result !== "powerGoal");
