@@ -1,18 +1,22 @@
-# SoccerConfrontation
+# Neon Strike 3V3
 
-A simple penalty confrontation mini-game. Aim with the arrow keys, press space to shoot, and outsmart the AI keeper.
+一款无需安装、打开浏览器即可游玩的俯视角 2D 团队枪战游戏。玩家与两名 AI 队友组成蓝队，对抗三名红队 AI；在三分钟内率先获得 20 次击杀即可获胜。
 
-## Installation
+## 运行
 
-1. Clone this repository.
-2. Open `index.html` in your browser.
+直接打开 `index.html`，或在项目目录运行：
 
-## How to play
+```bash
+python3 -m http.server 8000
+```
 
-1. Open `index.html` in your browser.
-2. Use **⬅️ / ➡️** to aim left or right.
-3. Use **⬆️ / ⬇️** to aim high or low.
-4. Press **Space** to kick.
-5. Press **R** to reset the score.
+然后访问 `http://localhost:8000`。
 
-The keeper adapts by tracking your recent shot directions and pre-judging the most likely target.
+## 操作
+
+- **W / A / S / D**：移动
+- **鼠标**：瞄准
+- **鼠标左键**：射击
+- **R**：换弹
+
+移动端提供虚拟摇杆和开火按钮。
